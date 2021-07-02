@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #outer {
+            width: 251px;
+            /* border: 1px solid black; */
+            margin: 0 auto;
+            position: relative;
+        }
+
+        #inner {
+            overflow: hidden;
+        }
+
+        #con {
+            width: 1500px;
+            display: flex;
+        }
+
+        #con img {
+            width: 251px;
+            height: 500px;
+        }
+
+        #left,
+        #right {
+            width: 30px;
+            height: 30px;
+            background-color: cornflowerblue;
+            position: absolute;
+            border-radius: 50%;
+            line-height: 30px;
+            text-align: center;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+        }
+
+        #left {
+            left: 10px;
+        }
+
+        #right {
+            right: 10px;
+        }
+
+        #list {
+            display: flex;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #list li {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin: 5px;
+            background-color: lightslategray;
+        }
+
+        #list li.active {
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="outer">
+        <div id="inner">
+            <div id="con">
+                <img src="../img/1.jpg" alt="">
+                <img src="../img/2.jpg" alt="">
+                <img src="../img/3.jpg" alt="">
+                <img src="../img/4.jpg" alt="">
+                <img src="../img/5.jpg" alt="">
+                <img src="../img/6.jpg" alt="">
+                <img src="../img/7.jpg" alt="">
+                <img src="../img/8.jpg" alt="">
+                <img src="../img/1.jpg" alt="">
+            </div>
+
+            <p id="left">&lt;</p>
+            <p id="right">&gt;</p>
+
+            <ul id="list">
+                <li class="active"></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        var oInner = document.querySelector('#inner');
+        var oConImgs = document.querySelectorAll('#con img');
+        var oLeft = document.getElementById("left");
+        var oRight = document.getElementById("right");
+        var oLis = document.querySelectorAll("#list li");
+        var i = 0;
+        var autoTimer = null,
+            moveTimer = null;
+
+        autoTimer = setInterval(function () {
+            clearInterval(moveTimer);
+            i++;
+            if (i > oConImgs.length - 1) {
+                oInner.scrollLeft = 0
+                i = 1;
+            }
+
+            var nowLocation = oInner.scrollLeft;
+            var endLocation = i * oConImgs[0].offsetWidth;
+            var startStep = 0;
+            var endStep = 40;
+            var everyStep = (endLocation - nowLocation) / (endStep - startStep);
+
+            moveTimer = setInterval(function () {
+                startStep++;
+                if (startStep >= endStep) {
+                    clearInterval(moveTimer)
+                }
+                nowLocation += everyStep;
+                oInner.scrollLeft = nowLocation;
+            }, 20)
+            oLis.forEach(function (item, index) {
+                item.classList.remove("active");
+            })
+            if (i < oLis.length) {
+                oLis[i].classList.add("active");
+            } else {
+                oLis[0].classList.add("active");
+            }
+        }, 2000)
+
+        oRight.onclick = function () {
+            clearInterval(autoTimer);
+            clearInterval(moveTimer);
+            i++;
+            if (i > oConImgs.length - 1) {
+                oInner.scrollLeft = 0;
+                i = 1;
+            }
+            var startLocation = oInner.scrollLeft;
+            var endLocation = i * oConImgs[0].offsetWidth;
+            var startStep = 0;
+            var endStep = 40;
+            var everyStep = (endLocation - startLocation) / (endStep - startStep);
+            moveTimer = setInterval(function () {
+                startStep++;
+                if (startStep >= endStep) {
+                    clearInterval(moveTimer);
+                }
+                startLocation += everyStep;
+                oInner.scrollLeft = startLocation;
+            }, 20)
+            oLis.forEach(function (item, index) {
+                    item.classList.remove("active");
+                }
+
+            )
+            if (i < oLis.length) {
+                oLis[i].classList.add("active");
+            } else {
+                oLis[0].classList.add("active");
+            }
+
+        }
+        oLeft.onclick = function () {
+            clearInterval(autoTimer);
+            clearInterval(moveTimer);
+            i--;
+            if (i < 0) {
+                oInner.scrollLeft = oConImgs[0].offsetWidth * (oConImgs.length - 1)
+                i = oConImgs.length - 2;
+
+            }
+            var startLocation = oInner.scrollLeft;
+            var endLocation = i * oConImgs[0].offsetWidth;
+            var startStep = 0;
+            var endStep = 40;
+            var everyStep = (endLocation - startLocation) / (endStep - startStep);
+            moveTimer = setInterval(function () {
+                startStep++;
+                if (startStep >= endStep) {
+                    clearInterval(moveTimer);
+                }
+                startLocation += everyStep;
+                oInner.scrollLeft = startLocation;
+            }, 20)
+            oLis.forEach(function (item, index) {
+                item.classList.remove("active");
+            })
+            oLis[i].classList.add("active");
+
+        }
+        oLis.forEach(function (item, index) {
+            item.onclick = function () {
+                clearInterval(moveTimer);
+                clearInterval(autoTimer);
+                oLis.forEach(function (item, index) {
+                    item.classList.remove("active");
+                })
+                this.classList.add("active");
+                i = index;
+                var startLocation = oInner.scrollLeft;
+                var endLocation = i * oConImgs[0].offsetWidth;
+                var startStep = 0;
+                var endStep = 40;
+                var everyStep = (endLocation - startLocation) / (endStep - startStep);
+                moveTimer = setInterval(function () {
+                    startStep++
+                    if (startStep >= endStep) {
+                        clearInterval(moveTimer)
+                    }
+                    startLocation += everyStep;
+                    oInner.scrollLeft = startLocation;
+                }, 20)
+            }
+        })
+    </script>
+</body>
+
+</html>
